@@ -2,5 +2,5 @@
 
 * A report of the whole flow is captured in [01_data_exploration.ipynb](notebooks/01_data_exploration.ipynb)
 
-* A streamlite dashboard on : 
+* A streamlite dashboard on : https://anomalydetectionds-gd6owzszrhadbunkecym7e.streamlit.app/
 

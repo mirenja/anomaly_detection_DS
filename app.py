@@ -11,10 +11,10 @@ from src.models import train_model, evaluate_model
 # ---- PAGE CONFIG ----
 st.set_page_config(page_title="Cluster Infrastructure Analysis", layout="wide")
 
-st.title("Google Cluster Infrastructure — Anomaly & Failure Analysis")
+st.title("Google Cluster Infrastructure Anomaly & Failure Analysis")
 st.markdown("""
 > This dashboard explores failure patterns in Google's 2019 Borg cluster traces.  
-> We model failure arrivals using a **Poisson distribution** — a standard approach  
+> We model failure arrivals using a **Poisson distribution**   a standard approach  
 > for counting rare, independent events over time (such as machine failures in a data centre).
 """)
 
@@ -39,12 +39,12 @@ occur per machine per window. This gives us the data to fit a Poisson distributi
 """)
 
 # ==============================
-# SECTION 1 — POISSON OVERVIEW
+# SECTION 1   POISSON OVERVIEW
 # ==============================
-st.header("1. Failure Arrival Rate — Poisson Distribution")
+st.header("1. Failure Arrival Rate   Poisson Distribution")
 st.markdown("""
 **Why Poisson?**  
-Machine failures in a large cluster are rare, unpredictable, and (largely) independent of each other —  
+Machine failures in a large cluster are rare, unpredictable, and (largely) independent of each other    
 exactly the conditions under which a Poisson process applies. The Poisson distribution tells us:
 - **λ (lambda):** the average number of failures per time window
 - Whether failures are truly random or tend to cluster in time
@@ -77,11 +77,11 @@ col3.metric(
 
 # INSIGHT BANNER
 if ratio < 0.5:
-    st.info("   **Observation:** Variance/Mean is well below 1 — failures are very evenly spread across machines and time. This is a near-perfect Poisson process: failures are rare and independent.")
+    st.info("   **Observation:** Variance/Mean is well below 1   failures are very evenly spread across machines and time. This is a near-perfect Poisson process: failures are rare and independent.")
 elif 0.5 <= ratio <= 1.5:
-    st.success("  **Good Poisson fit:** Variance/Mean is close to 1 — failure arrivals follow a Poisson distribution, meaning they are roughly random and independent across the cluster.")
+    st.success("  **Good Poisson fit:** Variance/Mean is close to 1   failure arrivals follow a Poisson distribution, meaning they are roughly random and independent across the cluster.")
 else:
-    st.warning("   **Overdispersion detected:** Variance/Mean > 1 — failures tend to cluster together in time. This suggests failures may not be fully independent (e.g. cascading failures or correlated workloads).")
+    st.warning("   **Overdispersion detected:** Variance/Mean > 1   failures tend to cluster together in time. This suggests failures may not be fully independent (e.g. cascading failures or correlated workloads).")
 
 # ---- POISSON PLOT ----
 fig, ax = plt.subplots(figsize=(10, 4))
@@ -101,16 +101,16 @@ st.caption(f"""
 **Reading this chart:** The blue bars show how often each failure count (0, 1, 2, ...) 
 was observed across all machine-bin combinations. The red line is the theoretical Poisson 
 distribution with λ={lambda_:.3f}. When the bars closely follow the red line, 
-failures behave as a Poisson process — random and memoryless.
+failures behave as a Poisson process   random and memoryless.
 """)
 
 # ==============================
-# SECTION 2 — λ PER MACHINE
+# SECTION 2   λ PER MACHINE
 # ==============================
 st.header("2. Failure Rate (λ) per Machine")
 st.markdown("""
 Each machine has its own failure rate λ. Machines with higher λ fail more frequently 
-within the observation window — these are the **highest-risk nodes** in the cluster.  
+within the observation window   these are the **highest-risk nodes** in the cluster.  
 Identifying them early is the foundation of a proactive maintenance system.
 """)
 
@@ -135,10 +135,10 @@ above_avg = (lambda_per_machine > lambda_).sum()
 
 st.info(f"""
    **Observations:**
-- Machine **{top_machine}** has the highest failure rate at λ={top_lambda:.2f} failures/bin — 
+- Machine **{top_machine}** has the highest failure rate at λ={top_lambda:.2f} failures/bin   
   {(top_lambda/lambda_):.1f}x the cluster average.
 - **{above_avg}** machines have a failure rate above the cluster average (λ={lambda_:.3f}).
-- Machines with small integer IDs (like 6, 9, 49) appear at the top — these may be 
+- Machines with small integer IDs (like 6, 9, 49) appear at the top   these may be 
   heavily-loaded or older nodes in the cluster.
 """)
 
@@ -150,7 +150,7 @@ prioritised for inspection or workload redistribution.
 """)
 
 # ==============================
-# SECTION 3 — CONDITIONAL POISSON
+# SECTION 3   CONDITIONAL POISSON
 # ==============================
 st.header("3. Conditional Poisson: Does Resource Usage Affect Failure Rate?")
 st.markdown("""
@@ -222,7 +222,7 @@ st.pyplot(fig3)
 st.caption(f"""
 **Reading these charts:** Each panel shows the failure count distribution for one resource group.  
 The red line is the Poisson model fitted to that group's data.  
-Compare the λ values between panels — a larger λ in the HIGH group means  
+Compare the λ values between panels   a larger λ in the HIGH group means  
 higher resource usage is associated with more frequent failures.
 """)
 
@@ -237,7 +237,7 @@ if len(groups) == 2:
     if diff < 0.05:
         st.success(f"  **No meaningful difference:** Both groups have similar λ values ({lam_high:.3f} vs {lam_low:.3f}). **{resource_labels[selected_resource]}** does not appear to be a significant failure risk factor.")
     elif lam_high > lam_low:
-        st.warning(f"   **Risk factor detected:** The HIGH {selected_resource} group has λ={lam_high:.3f} vs λ={lam_low:.3f} for the LOW group — a **{pct:.0f}% higher failure rate**. Machines using more {selected_resource} fail more often.")
+        st.warning(f"   **Risk factor detected:** The HIGH {selected_resource} group has λ={lam_high:.3f} vs λ={lam_low:.3f} for the LOW group   a **{pct:.0f}% higher failure rate**. Machines using more {selected_resource} fail more often.")
     else:
         st.info(f"   **Inverse relationship:** The LOW {selected_resource} group has a higher failure rate (λ={lam_low:.3f} vs λ={lam_high:.3f}). This may indicate that already-failing machines are consuming fewer resources.")
 
@@ -264,16 +264,16 @@ st.dataframe(pd.DataFrame(summary_data), use_container_width=True)
 st.caption("""
 **Variance/Mean interpretation:** A ratio close to 1 confirms the Poisson assumption holds 
 within each resource group. A ratio significantly above 1 suggests bursty, correlated failures 
-within that group — which may warrant a negative binomial model instead.
+within that group   which may warrant a negative binomial model instead.
 """)
 
 # ==============================
-# SECTION 4 — FEATURE ENGINEERING
+# SECTION 4   FEATURE ENGINEERING
 # ==============================
-st.header("4. Feature Engineering — Per-Machine Time Windows")
+st.header("4. Feature Engineering   Per-Machine Time Windows")
 st.markdown("""
 Rather than feeding raw row-level events to the model, we aggregate  
-into **per-machine per-hour windows** — each row summarises how a machine  
+into **per-machine per-hour windows**   each row summarises how a machine  
 behaved during that window. This gives the model temporal context.
 """)
 
@@ -312,13 +312,13 @@ High `std_memory` or `max_cpi` in a window may signal a machine under stress.
 # insight banner
 high_fail_windows = (window_features['fail_count'] > 1).sum()
 st.info(f"""
-   **Observation:** {high_fail_windows:,} windows contain more than one failure —  
+   **Observation:** {high_fail_windows:,} windows contain more than one failure    
 these are machines experiencing repeated failures within the same hour,  
 which the Poisson analysis flagged as overdispersed behaviour.
 """)
 
 # ==============================
-# SECTION 5 — XGBOOST MODEL
+# SECTION 5   XGBOOST MODEL
 # ==============================
 st.header("5. XGBoost Failure Prediction")
 st.markdown("""
@@ -326,9 +326,9 @@ We train an XGBoost classifier on the windowed features to predict
 whether a machine will fail within the next **30 minutes**.
 
 **Key design decisions:**
-- **No shuffle** in train/test split — respects temporal order, avoids data leakage
-- **scale_pos_weight** — handles class imbalance by upweighting failure events  
-- **Recall prioritised over Precision** — missing a failure is more costly than a false alarm
+- **No shuffle** in train/test split   respects temporal order, avoids data leakage
+- **scale_pos_weight**   handles class imbalance by upweighting failure events  
+- **Recall prioritised over Precision**   missing a failure is more costly than a false alarm
 """)
 
 @st.cache_data
@@ -387,7 +387,7 @@ elif recall >= 0.4:
 else:
     st.error(f"""
         **Low recall ({recall:.2f}):** The model is missing most failures.  
-    The 30-minute window may be too narrow — consider widening the horizon.
+    The 30-minute window may be too narrow   consider widening the horizon.
     """)
 
 # ---- PLOTS ----
@@ -435,7 +435,7 @@ st.pyplot(fig)
 
 st.caption("""
 **Feature Importance:** Which signals the model relies on most to predict failure.  
-**Precision-Recall Curve:** The red line is a random classifier baseline — anything  
+**Precision-Recall Curve:** The red line is a random classifier baseline   anything  
 above it represents genuine predictive power.  
 **Confusion Matrix:** Top-left = correctly predicted no failure,  
 bottom-right = correctly predicted failure (true positives).
