@@ -79,6 +79,14 @@ def build_window_features(df, interval=3600):
     df['time_sec'] = df['time'] / 1_000_000
     df['time_bin'] = (df['time_sec'] // interval).astype(int)
 
+
+    if 'label' not in df.columns:
+        df = df.sort_values(['machine_id', 'time'])
+        df['max_time'] = df.groupby('machine_id')['time'].transform('max')
+        df['time_to_end'] = df['max_time'] - df['time']
+        HORIZON = 30 * 60 * 1_000_000  # 30 min in microseconds (time col is in µs)
+        df['label'] = ((df['label_raw'] == 1) & (df['time_to_end'] <= HORIZON)).astype(int)
+
     # aggregate resource signals per machine per window
     window_features = df.groupby(['machine_id', 'time_bin']).agg(
         # memory signals
