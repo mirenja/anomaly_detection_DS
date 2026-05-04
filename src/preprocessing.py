@@ -21,7 +21,7 @@ def load_and_prepare():
     df['max_time'] = df.groupby('machine_id')['time'].transform('max')
     df['time_to_end'] = df['max_time'] - df['time']
     
-    HORIZON = 30 * 60  # 30 min in seconds
+    HORIZON = 30 * 60 * 1_000_000  # 30 min in seconds
     df['label'] = ((df['label_raw'] == 1) & (df['time_to_end'] <= HORIZON)).astype(int)
     
     return df
