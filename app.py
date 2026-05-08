@@ -28,7 +28,7 @@ df = get_data()
 st.sidebar.header("Settings")
 interval = st.sidebar.selectbox(
     "Time bin interval (seconds)",
-    [3600, 7200],
+    [61800, 3600, 7200],
     index=2,
     help="How wide each time window is. 3600 = 1 hour bins."
 )
